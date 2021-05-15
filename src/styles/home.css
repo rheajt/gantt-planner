@@ -1,0 +1,11 @@
+.wrapper {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+}
+
+.select-file {
+    border: 1px solid black;
+    width: 400px;
+}
