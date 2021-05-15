@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
+import { ILabelInfo } from '../../typings/ILabelInfo';
 import { PlannerRow } from '../../typings/PlannerRow';
 import CollapseCard from '../components/CollapseCard';
 
 interface Props {
     data: PlannerRow[];
+    labels: ILabelInfo | null;
 }
 
 const Gantt = (props: Props) => {
@@ -27,10 +29,11 @@ const Gantt = (props: Props) => {
     }
 
     return (
-        <Accordion defaultActiveKey="0">
+        <Container fluid>
             {sections.map((s, idx) => {
                 const plans = props.data
                     .filter((d) => d['Bucket Name'] === s)
+                    .filter((d) => d.Progress !== 'Not Started')
                     .filter((d) => {
                         return d['Start Date'] !== '' && d['Due Date'] !== '';
                     });
@@ -44,7 +47,7 @@ const Gantt = (props: Props) => {
                     />
                 );
             })}
-        </Accordion>
+        </Container>
     );
 };
 

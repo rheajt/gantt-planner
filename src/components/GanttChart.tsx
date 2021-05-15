@@ -4,7 +4,6 @@ import { GanttRow } from '../../typings/GanttRow';
 import '../styles/gantt.css';
 
 function GanttChart({ rows }: { rows: GanttRow[] }) {
-    console.log(rows.length);
     const height = rows.length * 30 + 50;
     return (
         // <div className="gantt-container">
@@ -17,7 +16,7 @@ function GanttChart({ rows }: { rows: GanttRow[] }) {
                 [
                     { type: 'string', label: 'Task ID' },
                     { type: 'string', label: 'Task Name' },
-                    { type: 'string', label: 'Resource' },
+                    { type: 'string', label: 'Labels' },
                     { type: 'date', label: 'Start Date' },
                     { type: 'date', label: 'End Date' },
                     { type: 'number', label: 'Duration' },
@@ -31,6 +30,11 @@ function GanttChart({ rows }: { rows: GanttRow[] }) {
                 width: 1280,
                 gantt: {
                     trackHeight: 30,
+                },
+                animation: {
+                    duration: 1000,
+                    easing: 'out',
+                    startup: true,
                 },
             }}
             rootProps={{ 'data-testid': '2' }}

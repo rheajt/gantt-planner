@@ -35,31 +35,55 @@ const Home = (props: Props) => {
         };
     };
 
-    console.log(props.data);
+    const labels = props.data.reduce<string[]>((acc, cur) => {
+        const ls = cur.Labels.split(';');
+
+        ls.forEach((l) => {
+            if (!acc.includes(l)) {
+                acc.push(l);
+            }
+        });
+
+        return acc;
+    }, []);
+
     return (
         <div className="wrapper">
-            <Form className="select-file">
-                <Form.File
-                    label="Excel file input"
-                    onChange={readFile}
-                    custom
-                />
-            </Form>
-
-            {props.data.length > 0 && (
+            {props.data.length > 0 ? (
                 <>
-                    <Button as={Link} variant="primary" to="/gantt">
-                        View Gantt
-                    </Button>
-                    <Button
-                        variant="default"
-                        onClick={() => {
-                            props.setData([]);
-                        }}
-                    >
-                        Cancel
-                    </Button>
+                    <div>{labels}</div>
+
+                    <div className="actions">
+                        <Button as={Link} variant="primary" to="/gantt">
+                            View Gantt
+                        </Button>
+
+                        <Button
+                            as={Link}
+                            variant="primary"
+                            to="/labelled-gantt"
+                        >
+                            View Gantt (by labels)
+                        </Button>
+
+                        <Button
+                            variant="default"
+                            onClick={() => {
+                                props.setData([]);
+                            }}
+                        >
+                            Cancel
+                        </Button>
+                    </div>
                 </>
+            ) : (
+                <Form className="select-file">
+                    <Form.File
+                        label="Excel file input"
+                        onChange={readFile}
+                        custom
+                    />
+                </Form>
             )}
         </div>
     );
