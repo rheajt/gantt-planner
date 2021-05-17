@@ -12,6 +12,7 @@
     "@types/react-dom": "^17.0.5",
     "bootstrap": "4.6.0",
     "date-fns": "^2.21.3",
+    "gh-pages": "^3.1.0",
     "node-sass": "^6.0.0",
     "react": "^17.0.2",
     "react-bootstrap": "^1.6.0",
@@ -24,6 +25,8 @@
     "xlsx": "^0.17.0"
   },
   "scripts": {
+      "predeploy": "yarn run build",
+      "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -49,5 +52,6 @@
   },
   "devDependencies": {
     "@types/react-router-dom": "^5.1.7"
-  }
+  },
+  "homepage": "https://gantt.jordanrhea.com"
 }
