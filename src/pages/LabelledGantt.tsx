@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Badge,
-    Container,
-    ToggleButton,
-    ToggleButtonGroup,
-} from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 import { ILabelInfo } from '../../typings/ILabelInfo';
 import { PlannerRow } from '../../typings/PlannerRow';
-import CollapseCard from '../components/CollapseCard';
+import GanttChart from '../components/GanttChart';
+import Details from '../components/Details';
+import '../styles/gantt.css';
 
 interface Props {
     data: PlannerRow[];
@@ -17,6 +14,7 @@ interface Props {
 
 const Gantt = (props: Props) => {
     const [values, setValues] = useState<string[]>([]);
+    const [details, setDetails] = useState<PlannerRow | null>(null);
 
     useEffect(() => {
         if (props.labels) {
@@ -46,37 +44,14 @@ const Gantt = (props: Props) => {
             return d.Labels.split(';').some((l) => values.includes(l));
         });
 
-    const labels = props.labels;
-
     return (
         <Container fluid>
-            <div>
-                <ToggleButtonGroup
-                    type="checkbox"
-                    value={values}
-                    onChange={(e) => {
-                        setValues(e);
-                    }}
-                    className="mb-2"
-                >
-                    {Object.keys(labels).map((key) => {
-                        let label = labels[key];
-                        return (
-                            <ToggleButton value={label.label}>
-                                {label.label}
-                                <Badge variant="light">{label.count}</Badge>
-                            </ToggleButton>
-                        );
-                    })}
-                </ToggleButtonGroup>
-                <p>{values}</p>
-            </div>
-
-            <CollapseCard
-                eventKey={'' + 0}
-                title={'All Buckets'}
-                plans={plans}
-            />
+            <Row>
+                <Col sm={8}>
+                    <GanttChart setDetails={setDetails} plans={plans} />
+                </Col>
+                <Col sm={4}>{details && <Details details={details} />}</Col>
+            </Row>
         </Container>
     );
 };

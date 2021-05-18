@@ -1,12 +1,44 @@
-import React from 'react';
 import Chart from 'react-google-charts';
-import { GanttRow } from '../../typings/GanttRow';
+import { PlannerRow } from '../../typings/PlannerRow';
 import '../styles/gantt.css';
 
-function GanttChart({ rows }: { rows: GanttRow[] }) {
+interface Props {
+    plans: PlannerRow[];
+    setDetails: Function;
+}
+
+function parseRatio(str: string) {
+    if (!str.includes('/')) return 0;
+
+    const [num, den] = str.split('/').map((n) => +n);
+    return 100 * Math.round(num / den);
+}
+
+function GanttChart({ plans, setDetails }: Props) {
+    const rows = plans.map<any>((p) => {
+        const start = p['Start Date'];
+        const end = p['Due Date'];
+
+        const percentage =
+            p.Progress === 'Completed'
+                ? 100
+                : parseRatio(p['Completed Checklist Items']);
+
+        return [
+            p['Task ID'] || '',
+            p['Task Name'] || '',
+            p['Bucket Name'],
+            new Date(start),
+            new Date(end),
+            null,
+            percentage,
+            null,
+        ];
+    });
+
     const height = rows.length * 30 + 50;
+
     return (
-        // <div className="gantt-container">
         <Chart
             width={'100%'}
             height={height + 'px'}
@@ -27,7 +59,6 @@ function GanttChart({ rows }: { rows: GanttRow[] }) {
             ]}
             options={{
                 height,
-                width: 1280,
                 gantt: {
                     trackHeight: 30,
                 },
@@ -42,8 +73,8 @@ function GanttChart({ rows }: { rows: GanttRow[] }) {
                 {
                     eventName: 'select',
                     callback: ({ chartWrapper }) => {
-                        const chart = chartWrapper.getChart()
-                        const selection = chart.getSelection()
+                        const chart = chartWrapper.getChart();
+                        const selection = chart.getSelection();
 
                         if (selection.length === 1) {
                             const [selectedItem] = selection;
@@ -51,13 +82,17 @@ function GanttChart({ rows }: { rows: GanttRow[] }) {
                             const { row } = selectedItem;
 
                             if (!dataTable) return;
-                            console.log(dataTable.getValue(row, 1));
+                            const planId = dataTable.getValue(row, 0);
+                            const [plan] = plans.filter(
+                                (p) => p['Task ID'] === planId
+                            );
+                            console.log(plan);
+                            setDetails(plan);
                         }
                     },
                 },
             ]}
         />
-        // </div>
     );
 }
 

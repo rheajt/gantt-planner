@@ -1,3 +1,7 @@
 .gantt-container {
     overflow-x: scroll;
 }
+
+.details-container {
+    position: fixed;
+}

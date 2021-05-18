@@ -1,5 +1,5 @@
 import React, { ChangeEvent } from 'react';
-import { Image, Button, Form } from 'react-bootstrap';
+import { Image, Button, Form, Container } from 'react-bootstrap';
 import { PlannerRow } from '../../typings/PlannerRow';
 import { Link } from 'react-router-dom';
 import xlsx from 'xlsx';
@@ -7,13 +7,17 @@ import xlsx from 'xlsx';
 import logo from '../img/gantt-img.png';
 
 import '../styles/home.css';
+import { ILabelInfo } from '../../typings/ILabelInfo';
 
 interface Props {
     data: PlannerRow[];
+    labels: ILabelInfo | null;
+    selectedLabels: ILabelInfo | null;
+    setSelectedLabels: Function;
     setData: Function;
 }
 
-const Home = (props: Props) => {
+const Home: React.FC<Props> = (props) => {
     const readFile = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
         const file = e.target.files[0];
@@ -37,37 +41,35 @@ const Home = (props: Props) => {
         };
     };
 
-    const labels = props.data.reduce<string[]>((acc, cur) => {
-        const ls = cur.Labels.split(';');
-
-        ls.forEach((l) => {
-            if (!acc.includes(l)) {
-                acc.push(l);
-            }
-        });
-
-        return acc;
-    }, []);
-
     return (
-        <div className="wrapper">
-
-            <Image src={logo} rounded />
+        <Container>
+            <Image src={logo} rounded fluid />
+            <h1 className="title">Gantt Planner</h1>
 
             {props.data.length > 0 ? (
                 <>
-                    <div>{labels}</div>
+                    <div>
+                        <ul>
+                            {props.labels &&
+                                Object.keys(props.labels).map((key) => {
+                                    if (props.labels && props.labels[key]) {
+                                        const l = props.labels[key];
+                                        return (
+                                            <Form.Check
+                                                key={`${l.label}-${l.count}`}
+                                                type="checkbox"
+                                                label={l.label}
+                                            />
+                                        );
+                                    }
+
+                                    return <div />;
+                                })}
+                        </ul>
+                    </div>
 
                     <div className="actions">
                         <Button as={Link} variant="primary" to="/gantt">
-                            View Gantt
-                        </Button>
-
-                        <Button
-                            as={Link}
-                            variant="primary"
-                            to="/labelled-gantt"
-                        >
                             View Gantt (by labels)
                         </Button>
 
@@ -90,7 +92,7 @@ const Home = (props: Props) => {
                     />
                 </Form>
             )}
-        </div>
+        </Container>
     );
 };
 
