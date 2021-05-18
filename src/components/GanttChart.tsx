@@ -38,6 +38,24 @@ function GanttChart({ rows }: { rows: GanttRow[] }) {
                 },
             }}
             rootProps={{ 'data-testid': '2' }}
+            chartEvents={[
+                {
+                    eventName: 'select',
+                    callback: ({ chartWrapper }) => {
+                        const chart = chartWrapper.getChart()
+                        const selection = chart.getSelection()
+
+                        if (selection.length === 1) {
+                            const [selectedItem] = selection;
+                            const dataTable = chartWrapper.getDataTable();
+                            const { row } = selectedItem;
+
+                            if (!dataTable) return;
+                            console.log(dataTable.getValue(row, 1));
+                        }
+                    },
+                },
+            ]}
         />
         // </div>
     );

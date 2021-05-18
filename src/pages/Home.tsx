@@ -1,8 +1,10 @@
 import React, { ChangeEvent } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Image, Button, Form } from 'react-bootstrap';
 import { PlannerRow } from '../../typings/PlannerRow';
 import { Link } from 'react-router-dom';
 import xlsx from 'xlsx';
+
+import logo from '../img/gantt-img.png';
 
 import '../styles/home.css';
 
@@ -49,6 +51,9 @@ const Home = (props: Props) => {
 
     return (
         <div className="wrapper">
+
+            <Image src={logo} rounded />
+
             {props.data.length > 0 ? (
                 <>
                     <div>{labels}</div>
