@@ -9,18 +9,12 @@ import '../styles/gantt.css';
 
 interface Props {
     data: PlannerRow[];
-    labels: ILabelInfo | null;
+    labels: string[];
 }
 
 const Gantt = (props: Props) => {
-    const [values, setValues] = useState<string[]>([]);
+    const [values, setValues] = useState<string[]>(props.labels);
     const [details, setDetails] = useState<PlannerRow | null>(null);
-
-    useEffect(() => {
-        if (props.labels) {
-            setValues(Object.keys(props.labels));
-        }
-    }, [props.labels]);
 
     if (!props.data.length || !props.labels) {
         return <Redirect to="/" />;
@@ -37,12 +31,16 @@ const Gantt = (props: Props) => {
         .filter((d) => {
             return new Date(d['Start Date']) > new Date(2020, 6, 1);
         })
-        //remove plans without the selected labels
-        .filter((d) => {
-            if (!d.Labels) return false;
+        .map((d) => {
+            const split = d.Labels.split(';');
+            const [labelMatch] = split.filter((ls) => values.includes(ls));
 
-            return d.Labels.split(';').some((l) => values.includes(l));
-        });
+            return { ...d, Labels: labelMatch };
+        })
+        .filter((d) => {
+            return d.Labels;
+        })
+        .sort((a, b) => a.Labels.localeCompare(b.Labels));
 
     return (
         <Container fluid>
@@ -50,10 +48,11 @@ const Gantt = (props: Props) => {
                 <Col sm={8}>
                     <GanttChart setDetails={setDetails} plans={plans} />
                 </Col>
+
                 <Col sm={4}>{details && <Details details={details} />}</Col>
             </Row>
         </Container>
     );
 };
 
-export default React.memo(Gantt);
+export default Gantt;

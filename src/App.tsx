@@ -7,18 +7,10 @@ import { PlannerRow } from '../typings/PlannerRow';
 import Home from './pages/Home';
 import LabelledGantt from './pages/LabelledGantt';
 
-// export interface ILabelInfo {
-//     [key: string]: {
-//         label: string;
-//         count: number;
-//     };
-// }
-
 function App() {
     const [data, setData] = useState<PlannerRow[]>([]);
     const [labels, setLabels] = useState<ILabelInfo | null>(null);
-    const [selectedLabels, setSelectedLabels] =
-        useState<ILabelInfo | null>(null);
+    const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
     useEffect(() => {
         const labelInfo = data.reduce<ILabelInfo>((acc, cur) => {
@@ -59,20 +51,36 @@ function App() {
         setData(withYaml);
     };
 
+    const handleSetSelectedLabels = (val: string) => {
+        if (selectedLabels.includes(val)) {
+            const updated = selectedLabels.reduce<string[]>((acc, cur) => {
+                if (cur === val) {
+                    return acc;
+                }
+                acc.push(cur);
+                return acc;
+            }, []);
+
+            setSelectedLabels(updated);
+        } else {
+            setSelectedLabels([...selectedLabels, val]);
+        }
+    };
+
     return (
         <Router>
             <Switch>
                 <Route path="/gantt">
-                    <LabelledGantt data={data} labels={labels} />
+                    <LabelledGantt data={data} labels={selectedLabels} />
                 </Route>
 
                 <Route path="/">
                     <Home
                         data={data}
-                        setData={handleSetData}
                         labels={labels}
+                        setData={handleSetData}
                         selectedLabels={selectedLabels}
-                        setSelectedLabels={setSelectedLabels}
+                        setSelectedLabels={handleSetSelectedLabels}
                     />
                 </Route>
             </Switch>
