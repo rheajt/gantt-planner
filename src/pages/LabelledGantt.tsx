@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
-import { ILabelInfo } from '../../typings/ILabelInfo';
 import { PlannerRow } from '../../typings/PlannerRow';
 import GanttChart from '../components/GanttChart';
 import Details from '../components/Details';
@@ -12,8 +11,7 @@ interface Props {
     labels: string[];
 }
 
-const Gantt = (props: Props) => {
-    const [values, setValues] = useState<string[]>(props.labels);
+const Gantt: React.FC<Props> = (props) => {
     const [details, setDetails] = useState<PlannerRow | null>(null);
 
     if (!props.data.length || !props.labels) {
@@ -21,6 +19,7 @@ const Gantt = (props: Props) => {
     }
 
     props.labels.sort();
+
     const plans = props.data
         //remove plans not started
         .filter((d) => d.Progress !== 'Not Started')
@@ -34,7 +33,7 @@ const Gantt = (props: Props) => {
         })
         .map((d) => {
             const split = d.Labels.split(';');
-            const [labelMatch] = split.filter((ls) => values.includes(ls));
+            const [labelMatch] = split.filter((ls) => props.labels.includes(ls));
 
             return { ...d, Labels: labelMatch };
         })
@@ -45,18 +44,20 @@ const Gantt = (props: Props) => {
 
     return (
         <Container fluid>
-            {/* <Row>
-                <Col>
-                    <p>
-                        {props.labels.map((lb) => {
-                            return <span key={lb}>{lb}</span>;
-                        })}
-                    </p>
-                </Col>
-            </Row> */}
             <Row>
                 <Col sm={8}>
-                    <GanttChart setDetails={setDetails} plans={plans} />
+                    {props.labels.map(label => {
+                        const hasLabel = plans.filter(p => p.Labels.includes(label)).length;
+
+                        return <div key={`label-${label}`}>
+                            <p><b>{label}</b></p>
+                            {hasLabel ? (
+                                <GanttChart setDetails={setDetails} plans={plans.filter(p => p.Labels.includes(label))} />
+                            ) : (
+                                <p>No plans found</p>
+                            )}
+                        </div>
+                    })}
                 </Col>
 
                 <Col sm={4}>{details && <Details details={details} />}</Col>

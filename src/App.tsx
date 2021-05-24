@@ -32,12 +32,13 @@ function App() {
         }, {});
 
         setLabels(labelInfo);
+
+        console.log(Object.keys(labelInfo));
+        setSelectedLabels(Object.keys(labelInfo));
     }, [data]);
 
     const handleSetData = (json: PlannerRow[]) => {
         const withYaml = json.reduce<PlannerRow[]>((acc, wy) => {
-            console.log(wy);
-
             if (wy.Description.includes('---')) {
                 const [yml, desc] = wy.Description.split('---');
                 let parsed = {};
@@ -76,6 +77,7 @@ function App() {
         }
     };
 
+console.log(selectedLabels);
     return (
         <Router>
             <Switch>

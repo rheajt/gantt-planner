@@ -59,6 +59,7 @@ const Home: React.FC<Props> = (props) => {
                                                 key={`${l.label}-${l.count}`}
                                                 type="checkbox"
                                                 label={l.label}
+                                                checked={props.selectedLabels.includes(key)}
                                                 onChange={(e) => {
                                                     props.setSelectedLabels(
                                                         l.label

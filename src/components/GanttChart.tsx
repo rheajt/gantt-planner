@@ -27,7 +27,7 @@ function GanttChart({ plans, setDetails }: Props) {
         return [
             p['Task ID'] || '',
             p['Task Name'] || '',
-            p.Labels,
+            p['Bucket Name'],
             new Date(start),
             new Date(end),
             null,
