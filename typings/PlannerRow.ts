@@ -16,7 +16,7 @@ export interface PlannerRow {
     'Start Date': string;
     'Task ID': 'PR9_-pI36UmtevbEZfiyw8gAFdIJ';
     'Task Name': 'Planning for May 11 VLS (Classroom Website)';
-    Other?: {
+    Other: {
         [key: string]: string;
     };
 }

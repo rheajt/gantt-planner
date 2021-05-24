@@ -12,7 +12,7 @@ import { ILabelInfo } from '../../typings/ILabelInfo';
 interface Props {
     data: PlannerRow[];
     labels: ILabelInfo | null;
-    selectedLabels: ILabelInfo | null;
+    selectedLabels: string[];
     setSelectedLabels: Function;
     setData: Function;
 }
@@ -59,6 +59,11 @@ const Home: React.FC<Props> = (props) => {
                                                 key={`${l.label}-${l.count}`}
                                                 type="checkbox"
                                                 label={l.label}
+                                                onChange={(e) => {
+                                                    props.setSelectedLabels(
+                                                        l.label
+                                                    );
+                                                }}
                                             />
                                         );
                                     }

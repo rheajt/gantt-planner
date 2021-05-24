@@ -9,23 +9,18 @@ import '../styles/gantt.css';
 
 interface Props {
     data: PlannerRow[];
-    labels: ILabelInfo | null;
+    labels: string[];
 }
 
 const Gantt = (props: Props) => {
-    const [values, setValues] = useState<string[]>([]);
+    const [values, setValues] = useState<string[]>(props.labels);
     const [details, setDetails] = useState<PlannerRow | null>(null);
-
-    useEffect(() => {
-        if (props.labels) {
-            setValues(Object.keys(props.labels));
-        }
-    }, [props.labels]);
 
     if (!props.data.length || !props.labels) {
         return <Redirect to="/" />;
     }
 
+    props.labels.sort();
     const plans = props.data
         //remove plans not started
         .filter((d) => d.Progress !== 'Not Started')
@@ -37,35 +32,37 @@ const Gantt = (props: Props) => {
         .filter((d) => {
             return new Date(d['Start Date']) > new Date(2020, 6, 1);
         })
-        //remove plans without the selected labels
-        .filter((d) => {
-            if (!d.Labels) return false;
-
-            return d.Labels.split(';').some((l) => values.includes(l));
-        })
         .map((d) => {
-            const splitLabels = d.Labels.split(';');
-            const [mainLabel] = splitLabels.filter((each) =>
-                values.includes(each)
-            );
-            return { ...d, Labels: mainLabel };
-        });
+            const split = d.Labels.split(';');
+            const [labelMatch] = split.filter((ls) => values.includes(ls));
+
+            return { ...d, Labels: labelMatch };
+        })
+        .filter((d) => {
+            return d.Labels;
+        })
+        .sort((a, b) => a.Labels.localeCompare(b.Labels));
 
     return (
         <Container fluid>
-            <Row>
+            {/* <Row>
                 <Col>
-                    <pre>{JSON.stringify(props.labels, null, 2)}</pre>
+                    <p>
+                        {props.labels.map((lb) => {
+                            return <span key={lb}>{lb}</span>;
+                        })}
+                    </p>
                 </Col>
-            </Row>
+            </Row> */}
             <Row>
                 <Col sm={8}>
                     <GanttChart setDetails={setDetails} plans={plans} />
                 </Col>
+
                 <Col sm={4}>{details && <Details details={details} />}</Col>
             </Row>
         </Container>
     );
 };
 
-export default React.memo(Gantt);
+export default Gantt;

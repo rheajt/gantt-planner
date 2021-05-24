@@ -7,18 +7,10 @@ import { PlannerRow } from '../typings/PlannerRow';
 import Home from './pages/Home';
 import LabelledGantt from './pages/LabelledGantt';
 
-// export interface ILabelInfo {
-//     [key: string]: {
-//         label: string;
-//         count: number;
-//     };
-// }
-
 function App() {
     const [data, setData] = useState<PlannerRow[]>([]);
     const [labels, setLabels] = useState<ILabelInfo | null>(null);
-    const [selectedLabels, setSelectedLabels] =
-        useState<ILabelInfo | null>(null);
+    const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
 
     useEffect(() => {
         const labelInfo = data.reduce<ILabelInfo>((acc, cur) => {
@@ -44,9 +36,18 @@ function App() {
 
     const handleSetData = (json: PlannerRow[]) => {
         const withYaml = json.reduce<PlannerRow[]>((acc, wy) => {
+            console.log(wy);
+
             if (wy.Description.includes('---')) {
                 const [yml, desc] = wy.Description.split('---');
-                const parsed = YAML.parse(yml);
+                let parsed = {};
+                try {
+                    parsed = YAML.parse(yml);
+                } catch (err) {
+                    parsed = {
+                        YAML: 'Error parsing your YAML frontmatter',
+                    };
+                }
 
                 acc.push({ ...wy, Description: desc, Other: parsed });
             } else {
@@ -59,6 +60,22 @@ function App() {
         setData(withYaml);
     };
 
+    const handleSetSelectedLabels = (val: string) => {
+        if (selectedLabels.includes(val)) {
+            const updated = selectedLabels.reduce<string[]>((acc, cur) => {
+                if (cur === val) {
+                    return acc;
+                }
+                acc.push(cur);
+                return acc;
+            }, []);
+
+            setSelectedLabels(updated);
+        } else {
+            setSelectedLabels([...selectedLabels, val]);
+        }
+    };
+
     return (
         <Router>
             <Switch>
@@ -69,10 +86,10 @@ function App() {
                 <Route path="/">
                     <Home
                         data={data}
-                        setData={handleSetData}
                         labels={labels}
+                        setData={handleSetData}
                         selectedLabels={selectedLabels}
-                        setSelectedLabels={setSelectedLabels}
+                        setSelectedLabels={handleSetSelectedLabels}
                     />
                 </Route>
             </Switch>
