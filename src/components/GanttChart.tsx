@@ -27,7 +27,7 @@ function GanttChart({ plans, setDetails }: Props) {
         return [
             p['Task ID'] || '',
             p['Task Name'] || '',
-            p['Bucket Name'],
+            p.Labels,
             new Date(start),
             new Date(end),
             null,
@@ -35,6 +35,8 @@ function GanttChart({ plans, setDetails }: Props) {
             null,
         ];
     });
+
+    // rows.sort((a, b) => a[2] > b[2]);
 
     const height = rows.length * 30 + 50;
 
@@ -48,7 +50,7 @@ function GanttChart({ plans, setDetails }: Props) {
                 [
                     { type: 'string', label: 'Task ID' },
                     { type: 'string', label: 'Task Name' },
-                    { type: 'string', label: 'Labels' },
+                    { type: 'string', label: 'Resource' },
                     { type: 'date', label: 'Start Date' },
                     { type: 'date', label: 'End Date' },
                     { type: 'number', label: 'Duration' },

@@ -63,7 +63,7 @@ function App() {
         <Router>
             <Switch>
                 <Route path="/gantt">
-                    <LabelledGantt data={data} labels={labels} />
+                    <LabelledGantt data={data} labels={selectedLabels} />
                 </Route>
 
                 <Route path="/">

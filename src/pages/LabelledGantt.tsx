@@ -42,10 +42,22 @@ const Gantt = (props: Props) => {
             if (!d.Labels) return false;
 
             return d.Labels.split(';').some((l) => values.includes(l));
+        })
+        .map((d) => {
+            const splitLabels = d.Labels.split(';');
+            const [mainLabel] = splitLabels.filter((each) =>
+                values.includes(each)
+            );
+            return { ...d, Labels: mainLabel };
         });
 
     return (
         <Container fluid>
+            <Row>
+                <Col>
+                    <pre>{JSON.stringify(props.labels, null, 2)}</pre>
+                </Col>
+            </Row>
             <Row>
                 <Col sm={8}>
                     <GanttChart setDetails={setDetails} plans={plans} />
