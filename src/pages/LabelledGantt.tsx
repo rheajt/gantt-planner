@@ -33,14 +33,14 @@ const Gantt: React.FC<Props> = (props) => {
         })
         .map((d) => {
             const split = d.Labels.split(';');
-            const [labelMatch] = split.filter((ls) => props.labels.includes(ls));
+            const labelMatch = split.filter((ls) => props.labels.includes(ls));
 
-            return { ...d, Labels: labelMatch };
+            return { ...d, Labels: labelMatch.join(';') };
         })
         .filter((d) => {
             return d.Labels;
-        })
-        .sort((a, b) => a.Labels.localeCompare(b.Labels));
+        });
+        //.sort((a, b) => a.Labels.localeCompare(b.Labels));
 
     return (
         <Container fluid>
@@ -50,9 +50,8 @@ const Gantt: React.FC<Props> = (props) => {
                         const hasLabel = plans.filter(p => p.Labels.includes(label)).length;
 
                         return <div key={`label-${label}`}>
-                            <p><b>{label}</b></p>
                             {hasLabel ? (
-                                <GanttChart setDetails={setDetails} plans={plans.filter(p => p.Labels.includes(label))} />
+                                <GanttChart label={label} setDetails={setDetails} plans={plans.filter(p => p.Labels.includes(label))} />
                             ) : (
                                 <p>No plans found</p>
                             )}

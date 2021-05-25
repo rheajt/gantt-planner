@@ -3,6 +3,7 @@ import { PlannerRow } from '../../typings/PlannerRow';
 import '../styles/gantt.css';
 
 interface Props {
+    label: string;
     plans: PlannerRow[];
     setDetails: Function;
 }
@@ -14,7 +15,18 @@ function parseRatio(str: string) {
     return 100 * Math.round(num / den);
 }
 
-function GanttChart({ plans, setDetails }: Props) {
+function GanttChart({ label, plans, setDetails }: Props) {
+    const parentRow = [
+        label,
+        label.padStart(60, '-'),
+        null,
+        new Date(2020, 6, 1),
+        new Date(2021, 6, 1),
+        null,
+        100,
+        null
+    ];
+
     const rows = plans.map<any>((p) => {
         const start = p['Start Date'];
         const end = p['Due Date'];
@@ -36,9 +48,8 @@ function GanttChart({ plans, setDetails }: Props) {
         ];
     });
 
-    // rows.sort((a, b) => a[2] > b[2]);
 
-    const height = rows.length * 30 + 50;
+    const height = rows.length * 30 + 100;
 
     return (
         <Chart
@@ -57,20 +68,20 @@ function GanttChart({ plans, setDetails }: Props) {
                     { type: 'number', label: 'Percent Complete' },
                     { type: 'string', label: 'Dependencies' },
                 ],
+                parentRow,
                 ...rows,
             ]}
             options={{
                 height,
                 gantt: {
+                    labelMinWidth: 300,
+                    labelMaxWidth: 300,
+                    criticalPathEnabled: false,
                     trackHeight: 30,
-                },
-                animation: {
-                    duration: 1000,
-                    easing: 'out',
-                    startup: true,
+                    sortTasks: true,
                 },
             }}
-            rootProps={{ 'data-testid': '2' }}
+            rootProps={{ 'data-testid': label }}
             chartEvents={[
                 {
                     eventName: 'select',
@@ -88,7 +99,6 @@ function GanttChart({ plans, setDetails }: Props) {
                             const [plan] = plans.filter(
                                 (p) => p['Task ID'] === planId
                             );
-                            console.log(plan);
                             setDetails(plan);
                         }
                     },
